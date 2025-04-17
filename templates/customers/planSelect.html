@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Plan - Tiffin Service</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+            --success-color: #28a745;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.pexels.com/photos/750073/pexels-photo-750073.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .pricing-header {
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .pricing-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .pricing-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            animation: slideUp 1s ease-out;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: cardSlideIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .pricing-card:nth-child(1) { animation-delay: 0.2s; }
+        .pricing-card:nth-child(2) { animation-delay: 0.4s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes cardSlideIn {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .plan-name {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .plan-duration {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2.5rem;
+        }
+
+        .plan-features li {
+            margin-bottom: 1rem;
+            color: #555;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .plan-features li:hover {
+            color: var(--primary-color);
+        }
+
+        .plan-features i {
+            color: var(--primary-color);
+            margin-right: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .plan-features li:hover i {
+            transform: scale(1.2);
+        }
+
+        .select-plan-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .select-plan-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .select-plan-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            pointer-events: none;
+        }
+
+        .select-plan-btn:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+        }
+
+        .form-container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            border-radius: 15px;
+            padding: 0.9rem;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+            outline: none;
+        }
+
+        .confirmation-message {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            margin: 2rem auto;
+            animation: zoomIn 0.8s ease-out;
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confirmation-icon {
+            color: var(--success-color);
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .confirmation-title {
+            color: var(--success-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirmation-text {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-to-plans {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-plans:hover {
+            background: #3bb4ac;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            background: #f8f9fa;
+            color: var(--dark-color);
+            border: 2px solid #ddd;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            color: var(--dark-color);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-title {
+                font-size: 2.2rem;
+            }
+            .pricing-subtitle {
+                font-size: 1.1rem;
+            }
+            .pricing-card {
+                padding: 2rem;
+            }
+            .form-container {
+                padding: 2rem;
+                max-width: 90%;
+            }
+            .confirmation-message {
+                padding: 2rem;
+                max-width: 90%;
+            }
+            .plan-price {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pricing-header">
+        <div class="container">
+            <h1 class="pricing-title">Choose Your Perfect Plan</h1>
+            <p class="pricing-subtitle">Delicious and nutritious meals delivered right to your doorstep</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="pricing-card">
+                    <h3 class="plan-name">Basic Plan</h3>
+                    <div class="plan-price">₹1499</div>
+                    <div class="plan-duration">per month</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i>Daily Fresh Meals</li>
+                        <li><i class="fas fa-check"></i>Vegetarian Options</li>
+                        <li><i class="fas fa-check"></i>Free Delivery</li>
+                        <li><i class="fas fa-check"></i>Hygiene Guaranteed</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('basic')">Select Plan</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pricing-card">
+                    <h3 class="plan-name">Premium Plan</h3>
+                    <div class="plan-price">₹1999</div>
+                    <div class="plan-duration">per month</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i>All Basic Features</li>
+                        <li><i class="fas fa-check"></i>Non-Veg Options</li>
+                        <li><i class="fas fa-check"></i>Weekend Special Meals</li>
+                        <li><i class="fas fa-check"></i>Priority Delivery</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('premium')">Select Plan</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pricing-card">
+                    <h3 class="plan-name">Family Plan</h3>
+                    <div class="plan-price">₹3499</div>
+                    <div class="plan-duration">per month</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i>All Premium Features</li>
+                        <li><i class="fas fa-check"></i>4 Person Meals</li>
+                        <li><i class="fas fa-check"></i>Customizable Menu</li>
+                        <li><i class="fas fa-check"></i>24/7 Support</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('family')">Select Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container" id="planForm" style="display: none;">
+            <h2 class="text-center mb-4">Complete Your Plan Selection</h2>
+            <form id="orderForm" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden" id="selectedPlan" name="selected_plan">
+                    {{form.as_p}}
+                </div>
+                <div class="button-group">
+                    <button type="button" id="submitBtn" class="select-plan-btn">
+                        <i class="fas fa-check-circle mr-2"></i>Confirm Your Order
+                    </button>
+                    <button type="button" class="back-button" onclick="goBackToPlans()">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Plans
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="confirmation-message" id="confirmationMessage">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="confirmation-title">Order Placed Successfully!</h3>
+            <p class="confirmation-text">Thank you for choosing our tiffin service. Your <span id="confirmedPlan"></span> has been confirmed.</p>
+            <p class="confirmation-text">We'll contact you shortly with delivery details.</p>
+            <div class="text-center">
+                <button class="back-to-plans" onclick="location.reload()">
+                    <i class="fas fa-utensils mr-2"></i>Choose Another Plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        function selectPlan(plan) {
+            document.getElementById('selectedPlan').value = plan;
+            document.getElementById('planForm').style.display = 'block';
+            document.getElementById('planForm').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+
+        function goBackToPlans() {
+            document.getElementById('planForm').style.display = 'none';
+            window.scrollTo({
+                top: document.querySelector('.row').offsetTop - 100,
+                behavior: 'smooth'
+            });
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            // Get the selected plan name
+            const plan = document.getElementById('selectedPlan').value;
+            const planNames = {
+                'basic': 'Basic Plan',
+                'premium': 'Premium Plan',
+                'family': 'Family Plan'
+            };
+            
+            // Update the confirmation message with the selected plan
+            document.getElementById('confirmedPlan').textContent = planNames[plan];
+            
+            // Hide the form and show confirmation
+            document.getElementById('planForm').style.display = 'none';
+            document.getElementById('confirmationMessage').style.display = 'block';
+            document.getElementById('confirmationMessage').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // In a real app, you would submit the form here:
+            // document.getElementById('orderForm').submit();
+        });
+    </script>
+</body>
+</html>

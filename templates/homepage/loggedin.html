@@ -1,0 +1,2639 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block navbar %}
+{% if request.user.is_authenticated %}
+<li class="nav-item active">
+    <a href="#" class="nav-link">Bon appetite, {{ request.user }}!</a>
+</li>
+<li class="nav-item">
+    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+</li>
+{% else %}
+<li class="nav-item">
+    <a href="{% url 'login' %}" class="nav-link">Login</a>
+</li>
+<li class="nav-item">
+    <a href="{% url 'register' %}" class="nav-link">Register</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Enhanced Base Styles */
+    :root {
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --dark-color: #2d3436;
+        --light-color: #f9f9f9;
+        --accent-color: #ff8e8e;
+        --gradient-primary: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        --gradient-dark: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        background-color: #f9f9f9;
+    }
+
+    /* Particle Background */
+    .particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+
+    /* Welcome Section - Enhanced */
+    .welcome-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                    url("https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        height: 100vh;
+        min-height: 700px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to top, #f9f9f9, transparent);
+        z-index: 1;
+    }
+
+    .welcome-content {
+        position: relative;
+        z-index: 2;
+        padding: 0 20px;
+    }
+
+    .welcome-text {
+        font-size: 4rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #fff, #f5f5f5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInUp 1s ease, textGlow 3s ease-in-out infinite alternate;
+    }
+
+    .welcome-subtext {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 1s ease 0.3s both;
+    }
+
+    .cta-buttons {
+        margin-top: 2rem;
+        animation: fadeInUp 1s ease 0.6s both;
+    }
+
+    .cta-button {
+        display: inline-block;
+        padding: 1.2rem 2.5rem;
+        margin: 0 1rem;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .cta-button:hover::before {
+        left: 100%;
+    }
+
+    .cta-primary {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+    }
+
+    .cta-primary:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+    }
+
+    .cta-secondary {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+        backdrop-filter: blur(5px);
+    }
+
+    .cta-secondary:hover {
+        background-color: white;
+        color: var(--primary-color);
+        transform: translateY(-5px) scale(1.05);
+    }
+
+    /* Floating Food Icons */
+    .floating-icons {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .floating-icon {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.7;
+        animation: float 6s infinite ease-in-out;
+    }
+
+    /* Food Carousel - Enhanced */
+    .food-carousel {
+        padding: 80px 0;
+        background-color: #f8f9fa;
+        position: relative;
+
+    }
+
+    .food-carousel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 30px;
+        background: linear-gradient(to bottom, var(--dark-color), transparent);
+        opacity: 0.1;
+    }
+
+    .section-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--dark-color);
+        text-align: center;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: 2px;
+    }
+
+    .section-subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        text-align: center;
+        margin-bottom: 40px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .carousel {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .carousel:hover {
+        transform: translateY(-5px);
+    }
+
+    .carousel-inner {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .carousel-inner img {
+        object-fit: cover;
+        height: 500px;
+        transition: transform 0.8s ease;
+    }
+
+    .carousel-item {
+        transition: opacity 1.5s ease-in-out;
+    }
+
+    .carousel-item:hover img {
+        transform: scale(1.08);
+    }
+
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 15px;
+        padding: 20px;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 800px;
+        transition: all 0.5s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .carousel-caption h5 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .carousel-caption p {
+        font-size: 1.1rem;
+        color: #eee;
+        margin: 0;
+    }
+
+    .carousel-indicators {
+        margin-bottom: 20px;
+    }
+
+    .carousel-indicators button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 2px solid var(--primary-color);
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-indicators .active {
+        background-color: var(--primary-color);
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    /* Meal Plans Section - Enhanced */
+    .meal-plans {
+        padding: 100px 0;
+        background-color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .meal-plans::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    }
+
+    .flip-card {
+        perspective: 1000px;
+        background-color: transparent;
+        height: 450px;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .flip-card::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 5%;
+        width: 90%;
+        height: 20px;
+        background: rgba(0,0,0,0.1);
+        border-radius: 50%;
+        filter: blur(10px);
+        z-index: -1;
+        transition: all 0.3s ease;
+    }
+
+    .flip-card:hover::after {
+        bottom: -15px;
+        height: 25px;
+        filter: blur(15px);
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform-style: preserve-3d;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+    }
+
+    .flip-card:hover .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .flip-card-front {
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .flip-card-back {
+        background: var(--gradient-primary);
+        color: white;
+        transform: rotateY(180deg);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    .flip-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        padding: 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--dark-color);
+        position: relative;
+    }
+
+    .card-title::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background: var(--gradient-primary);
+        margin: 0.5rem auto;
+        border-radius: 2px;
+    }
+
+    .card-text {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .dish-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+        width: 100%;
+    }
+
+    .dish-list li {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        padding: 0.6rem 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 25px;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dish-list li::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: 0.5s;
+    }
+
+    .dish-list li:hover::before {
+        left: 100%;
+    }
+
+    .dish-list li:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(10px);
+    }
+
+    .plan-info {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1rem;
+    }
+
+    .plan-price {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        display: block;
+        position: relative;
+    }
+
+    .plan-price::before, .plan-price::after {
+        content: '~';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+
+    .plan-price::before {
+        left: -30px;
+    }
+
+    .plan-price::after {
+        right: -30px;
+    }
+
+    .plan-button {
+        display: inline-block;
+        padding: 1.2rem 3rem;
+        background: var(--gradient-dark);
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: none;
+        font-weight: 600;
+        font-size: 1.2rem;
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .plan-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .plan-button:hover::before {
+        left: 100%;
+    }
+
+    .plan-button:hover {
+        background: var(--gradient-primary);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+    }
+
+    /* Testimonials - Enhanced */
+    .testimonials {
+        padding: 100px 0;
+        background-color: #f8f9fa;
+        position: relative;
+    }
+
+    .testimonials::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    }
+
+    .testimonial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin: 1rem;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .testimonial-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 0;
+        background: var(--gradient-primary);
+        transition: all 0.5s ease;
+    }
+
+    .testimonial-card:hover::before {
+        height: 100%;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .testimonial-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--primary-color);
+        margin: 0 auto 1.5rem;
+        display: block;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover .testimonial-img {
+        transform: scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        color: #555;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        position: relative;
+    }
+
+    .testimonial-text::before, .testimonial-text::after {
+        content: '"';
+        font-size: 3rem;
+        color: var(--primary-color);
+        opacity: 0.3;
+        position: absolute;
+    }
+
+    .testimonial-text::before {
+        top: -20px;
+        left: -15px;
+    }
+
+    .testimonial-text::after {
+        bottom: -40px;
+        right: -15px;
+    }
+
+    .testimonial-author {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.25rem;
+        font-size: 1.3rem;
+    }
+
+    .testimonial-role {
+        color: #777;
+        font-size: 1rem;
+    }
+
+    .rating {
+        color: #ffc107;
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+    }
+
+    /* FAQ Section - Enhanced */
+    .faq-section {
+        padding: 100px 0;
+        background-color: white;
+        position: relative;
+    }
+
+    .faq-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    }
+
+    .custom-accordion {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .custom-accordion .accordion-item {
+        border: none;
+        border-radius: 15px !important;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background-color: #fff;
+    }
+
+    .custom-accordion .accordion-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-accordion .accordion-button {
+        background-color: #fff;
+        color: var(--dark-color);
+        font-weight: 600;
+        padding: 1.2rem 1.5rem;
+        border: none;
+        box-shadow: none;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-accordion .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: var(--primary-color);
+    }
+
+    .custom-accordion .accordion-button:focus {
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+    .custom-accordion .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ff6b6b'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        transition: transform 0.3s ease;
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    .custom-accordion .accordion-body {
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        color: #555;
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    /* Delivery Partners - Enhanced */
+    .delivery-partners {
+        padding: 100px 0;
+        background-color: #f8f9fa;
+        position: relative;
+    }
+    
+    .delivery-partners::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    }
+    
+    .partner-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        margin: 1rem;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .partner-card::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        transition: all 0.3s ease;
+    }
+    
+    .partner-card:hover::before {
+        height: 10px;
+    }
+    
+    .partner-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+    
+    .partner-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .partner-icon svg {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .ak-fast-food svg {
+        animation: pulse 2s infinite ease-in-out;
+    }
+    
+    .guru-nanak svg {
+        animation: rotate 4s linear infinite;
+    }
+    
+    .kamal-tiffin svg {
+        animation: bounce 1.5s ease-in-out infinite;
+    }
+    
+    .partner-card:hover .partner-icon {
+        transform: scale(1.1);
+    }
+    
+    /* Animation Keyframes */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    /* Additional Styling for Text */
+    h4 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .text-muted {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+    
+    .rating i {
+        color: #ffc107;
+        font-size: 1.2rem;
+    }
+  
+    /* Footer - Enhanced */
+    .footer {
+        background: var(--gradient-dark);
+        color: white;
+        padding: 100px 0 50px;
+        position: relative;
+    }
+
+    .footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(255,107,107,0.2), transparent);
+    }
+
+    .footer-logo {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: white;
+        position: relative;
+        display: inline-block;
+    }
+
+    .footer-logo::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: 2px;
+    }
+
+    .footer-links h5 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .footer-links h5::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: var(--gradient-primary);
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 1rem;
+        position: relative;
+        padding-left: 20px;
+    }
+
+    .footer-links li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .footer-links li:hover::before {
+        transform: translateX(5px);
+    }
+
+    .footer-links a {
+        color: #ddd;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary-color);
+        padding-left: 5px;
+    }
+
+    .social-icons {
+        margin-top: 2rem;
+    }
+
+    .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        margin-right: 15px;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+    }
+
+    .social-icons a:hover {
+        background: var(--gradient-primary);
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .copyright {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 2rem;
+        margin-top: 3rem;
+        text-align: center;
+        color: #aaa;
+        font-size: 1rem;
+    }
+
+    /* Scroll to Top Button - Enhanced */
+    .scroll-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        z-index: 99;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s ease;
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+        border: none;
+    }
+
+    .scroll-top.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .scroll-top:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(5deg);
+        }
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes textGlow {
+        0% {
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        100% {
+            text-shadow: 0 0 20px rgba(255,255,255,0.6);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .welcome-text {
+            font-size: 3.5rem;
+        }
+        .carousel-inner img {
+            height: 500px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .welcome-text {
+            font-size: 3rem;
+        }
+        .welcome-subtext {
+            font-size: 1.5rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+        }
+        .flip-card {
+            height: 420px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .welcome-text {
+            font-size: 2.5rem;
+        }
+        .welcome-section {
+            height: 80vh;
+            min-height: 600px;
+        }
+        .section-title {
+            font-size: 2.2rem;
+        }
+        .carousel-inner img {
+            height: 400px;
+        }
+        .testimonial-card, .partner-card {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .welcome-text {
+            font-size: 2rem;
+        }
+        .welcome-subtext {
+            font-size: 1.2rem;
+        }
+        .cta-button {
+            display: block;
+            margin: 1rem auto;
+            width: 80%;
+        }
+        .section-title {
+            font-size: 1.8rem;
+        }
+        .carousel-inner img {
+            height: 300px;
+        }
+        .flip-card {
+            height: 380px;
+        }
+    }
+
+        /* Meal Customizer Styles */
+        .meal-customizer {
+            position: relative;
+            overflow: hidden;
+            padding: 80px 0;
+        }
+        
+        .meal-customizer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+        }
+        
+        .thali-plate {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+        
+        .plate {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .plate-top {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 
+                        inset 0 -5px 15px rgba(0,0,0,0.1);
+            transform: rotateX(60deg) scale(0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .food-items {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            transform: rotateX(60deg) scale(0.95);
+            transition: all 0.3s ease;
+        }
+        
+        .food-item-img {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #aaa;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #eee;
+        }
+        
+        .nutrition-info {
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .nutrition-circle {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+        }
+        
+        .nutrition-circle svg {
+            transform: rotate(-90deg);
+        }
+        
+        .nutrition-circle .bg-circle {
+            fill: none;
+            stroke: #f0f0f0;
+            stroke-width: 4;
+        }
+        
+        .nutrition-circle .progress-circle {
+            fill: none;
+            stroke: #4ecdc4;
+            stroke-width: 4;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+        
+        .nutrition-circle[data-nutri="carbs"] .progress-circle {
+            stroke: #ff6b6b;
+        }
+        
+        .nutrition-circle[data-nutri="protein"] .progress-circle {
+            stroke: #4ecdc4;
+        }
+        
+        .nutrition-circle[data-nutri="fats"] .progress-circle {
+            stroke: #ffd166;
+        }
+        
+        .nutrition-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* Customization Options */
+        .customization-options {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        
+        .option-category {
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .category-title {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin: 0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .category-title:hover {
+            background: #f0f0f0;
+        }
+        
+        .category-title.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .category-title i.fa-chevron-down {
+            transition: transform 0.3s ease;
+        }
+        
+        .category-title.active i.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+        
+        .category-options {
+            padding: 15px;
+            background: white;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .category-options.show {
+            display: block;
+        }
+        
+        .food-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+        
+        .food-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .food-img {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .food-img img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .food-info {
+            flex-grow: 1;
+        }
+        
+        .food-info h6 {
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .add-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Selected Items */
+        .selected-items {
+            background: white;
+            border: 1px solid #eee;
+        }
+        
+        .selected-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .selected-item:last-child {
+            border-bottom: none;
+        }
+        
+        .selected-item-name {
+            flex-grow: 1;
+        }
+        
+        .selected-item-calories {
+            color: #777;
+            font-size: 0.9rem;
+            margin-right: 15px;
+        }
+        
+        .remove-item {
+            color: #ff6b6b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-item:hover {
+            transform: rotate(90deg);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .meal-preview-container {
+                margin-bottom: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .food-item {
+                padding: 8px;
+            }
+            
+            .food-img {
+                width: 40px;
+                height: 40px;
+                margin-right: 10px;
+            }
+        }
+    
+</style>
+
+<!-- Welcome Hero Section with Particles -->
+<div class="welcome-section">
+    <div id="particles-js" class="particles-js"></div>
+    
+    <!-- Floating Food Icons -->
+    <div class="floating-icons">
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787100.png'); top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787096.png'); top: 70%; left: 15%; animation-delay: 1s;"></div>
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787085.png'); top: 30%; left: 80%; animation-delay: 2s;"></div>
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787082.png'); top: 80%; left: 75%; animation-delay: 3s;"></div>
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787079.png'); top: 50%; left: 85%; animation-delay: 0.5s;"></div>
+        <div class="floating-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5787/5787106.png'); top: 60%; left: 10%; animation-delay: 2.5s;"></div>
+    </div>
+    
+    <div class="welcome-content">
+        {% if request.user.is_authenticated %}
+            <h1 class="welcome-text">Welcome back, {{ request.user.username }}!</h1>
+            <p class="welcome-subtext">Your delicious meals are just a click away</p>
+            <div class="cta-buttons">
+                <a href="{% url 'PlanSelect' %}" class="cta-button cta-primary">Special Plans</a>
+                <a href="#meal-plans" class="cta-button cta-secondary">Explore Plans</a>
+            </div>
+        {% else %}
+            <h1 class="welcome-text">Authentic Home-style Meals Delivered Daily</h1>
+            <p class="welcome-subtext">Fresh, hygienic and delicious tiffin service at your doorstep</p>
+            <div class="cta-buttons">
+                <a href="{% url 'login' %}" class="cta-button cta-primary">Get Started</a>
+                <a href="#meal-plans" class="cta-button cta-secondary">View Plans</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Food Carousel Section -->
+<section class="food-carousel">
+    <div class="container">
+      <h2 class="section-title">Our Delicious Creations</h2>
+      <p class="section-subtitle">Explore our mouth-watering menu featuring authentic Indian cuisine</p>
+  
+      <div id="foodCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner">
+          <!-- Deluxe Thali -->
+          <div class="carousel-item active">
+            <img src="https://img.freepik.com/free-photo/gourmet-bowl-with-healthy-rice-meat-vegetables-generated-by-ai_188544-14076.jpg?t=st=1744637720~exp=1744641320~hmac=65643342ec13201f411e5d146efafa0e9b29b04a5d38054120ad997fc7bbf874&w=1380" class="d-block w-100" alt="Deluxe Thali">
+            <div class="carousel-caption">
+              <h5>Deluxe Thali</h5>
+              <p>Complete meal with 5 dishes, dal, rice, roti and dessert</p>
+            </div>
+          </div>
+          <!-- Hyderabadi Biryani -->
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="d-block w-100" alt="Hyderabadi Biryani">
+            <div class="carousel-caption">
+              <h5>Hyderabadi Biryani</h5>
+              <p>Authentic dum biryani with raita and salan</p>
+            </div>
+          </div>
+          <!-- South Indian Platter -->
+          <div class="carousel-item">
+            <img src="https://img.freepik.com/premium-photo/group-south-indian-food-like-masala-dosa-uttapam-idli-idly-wada-vada-sambar-appam-semolina-halwa-upma-served-banana-leaf-with-colourful-chutneys-selective-focus_466689-25676.jpg?w=1380" class="d-block w-100" alt="South Indian Platter">
+            <div class="carousel-caption">
+              <h5>South Indian Platter</h5>
+              <p>Idli, dosa, vada with sambar and chutneys</p>
+            </div>
+          </div>
+          <!-- Punjabi Thali -->
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="d-block w-100" alt="Punjabi Thali">
+            <div class="carousel-caption">
+              <h5>Mumbai Special</h5>
+              <p>Pav Bhaji, Vada Pav, Puranpoli and more</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- Interactive Meal Customizer Section -->
+<section class="meal-customizer py-5" style="background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);">
+    <div class="container">
+        <h2 class="section-title">Build Your Perfect Meal</h2>
+        <p class="section-subtitle">Customize your thali with our interactive meal builder</p>
+        
+        <div class="row">
+            <!-- Meal Preview -->
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <div class="meal-preview-container">
+                    <div class="thali-plate">
+                        <div class="plate">
+                            <div class="plate-top"></div>
+                            <div class="food-items" id="custom-meal-preview">
+                                <!-- Food items will appear here dynamically -->
+                                <div class="empty-state">
+                                    <i class="fas fa-utensils"></i>
+                                    <p>Your customized meal will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nutrition-info mt-4 p-4 rounded">
+                        <h5><i class="fas fa-fire"></i> Nutrition Summary</h5>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 0%" id="calories-bar"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small>Calories: <span id="calories-count">0</span> kcal</small>
+                            <small class="text-muted">Recommended: 600-800 kcal</small>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-4 text-center">
+                                <div class="nutrition-circle" data-nutri="carbs">
+                                    <svg width="60" height="60">
+                                        <circle cx="30" cy="30" r="25" class="bg-circle"></circle>
+                                        <circle cx="30" cy="30" r="25" class="progress-circle" stroke-dasharray="0 158"></circle>
+                                    </svg>
+                                    <div class="nutrition-value">0g</div>
+                                    <small>Carbs</small>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="nutrition-circle" data-nutri="protein">
+                                    <svg width="60" height="60">
+                                        <circle cx="30" cy="30" r="25" class="bg-circle"></circle>
+                                        <circle cx="30" cy="30" r="25" class="progress-circle" stroke-dasharray="0 158"></circle>
+                                    </svg>
+                                    <div class="nutrition-value">0g</div>
+                                    <small>Protein</small>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="nutrition-circle" data-nutri="fats">
+                                    <svg width="60" height="60">
+                                        <circle cx="30" cy="30" r="25" class="bg-circle"></circle>
+                                        <circle cx="30" cy="30" r="25" class="progress-circle" stroke-dasharray="0 158"></circle>
+                                    </svg>
+                                    <div class="nutrition-value">0g</div>
+                                    <small>Fats</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customization Options -->
+            <div class="col-lg-7">
+                <div class="customization-options">
+                    <div class="option-category">
+                        <h5 class="category-title active" data-category="main-course">
+                            <i class="fas fa-utensils me-2"></i> Main Course
+                            <i class="fas fa-chevron-down float-end"></i>
+                        </h5>
+                        <div class="category-options show" id="main-course-options">
+                            <div class="row">
+                                <!-- Main Course Items -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Butter Chicken" data-calories="350" data-carbs="12" data-protein="25" data-fats="18" data-img="https://img.icons8.com/color/96/000000/chicken.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/chicken.png" alt="Butter Chicken">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Butter Chicken</h6>
+                                            <small class="text-muted">350 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Paneer Butter Masala" data-calories="320" data-carbs="20" data-protein="15" data-fats="22" data-img="https://img.icons8.com/color/96/000000/vegetarian-food.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/vegetarian-food.png" alt="Paneer Butter Masala">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Paneer Butter Masala</h6>
+                                            <small class="text-muted">320 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Dal Makhani" data-calories="280" data-carbs="35" data-protein="12" data-fats="10" data-img="https://img.icons8.com/color/96/000000/lentils.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/lentils.png" alt="Dal Makhani">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Dal Makhani</h6>
+                                            <small class="text-muted">280 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Chana Masala" data-calories="300" data-carbs="40" data-protein="10" data-fats="12" data-img="https://img.icons8.com/color/96/000000/chickpeas.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/chickpeas.png" alt="Chana Masala">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Chana Masala</h6>
+                                            <small class="text-muted">300 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-category">
+                        <h5 class="category-title" data-category="breads">
+                            <i class="fas fa-bread-slice me-2"></i> Breads
+                            <i class="fas fa-chevron-down float-end"></i>
+                        </h5>
+                        <div class="category-options" id="breads-options">
+                            <div class="row">
+                                <!-- Bread Items -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Butter Naan" data-calories="260" data-carbs="45" data-protein="8" data-fats="6" data-img="https://img.icons8.com/color/96/000000/naan.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/naan.png" alt="Butter Naan">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Butter Naan</h6>
+                                            <small class="text-muted">260 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Roti" data-calories="120" data-carbs="20" data-protein="4" data-fats="2" data-img="https://img.icons8.com/color/96/000000/flatbread.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/flatbread.png" alt="Roti">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Roti</h6>
+                                            <small class="text-muted">120 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Paratha" data-calories="280" data-carbs="35" data-protein="6" data-fats="12" data-img="https://img.icons8.com/color/96/000000/paratha.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/paratha.png" alt="Paratha">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Paratha</h6>
+                                            <small class="text-muted">280 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-category">
+                        <h5 class="category-title" data-category="rice">
+                            <i class="fas fa-utensil-spoon me-2"></i> Rice
+                            <i class="fas fa-chevron-down float-end"></i>
+                        </h5>
+                        <div class="category-options" id="rice-options">
+                            <div class="row">
+                                <!-- Rice Items -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Jeera Rice" data-calories="200" data-carbs="45" data-protein="4" data-fats="2" data-img="https://img.icons8.com/color/96/000000/rice-bowl.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/rice-bowl.png" alt="Jeera Rice">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Jeera Rice</h6>
+                                            <small class="text-muted">200 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Veg Biryani" data-calories="320" data-carbs="50" data-protein="8" data-fats="10" data-img="https://img.icons8.com/color/96/000000/biryani.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/biryani.png" alt="Veg Biryani">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Veg Biryani</h6>
+                                            <small class="text-muted">320 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-category">
+                        <h5 class="category-title" data-category="desserts">
+                            <i class="fas fa-ice-cream me-2"></i> Desserts
+                            <i class="fas fa-chevron-down float-end"></i>
+                        </h5>
+                        <div class="category-options" id="desserts-options">
+                            <div class="row">
+                                <!-- Dessert Items -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Gulab Jamun" data-calories="150" data-carbs="30" data-protein="2" data-fats="5" data-img="https://img.icons8.com/color/96/000000/gulab-jamun.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/gulab-jamun.png" alt="Gulab Jamun">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Gulab Jamun</h6>
+                                            <small class="text-muted">150 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="food-item" data-name="Kheer" data-calories="180" data-carbs="35" data-protein="5" data-fats="4" data-img="https://img.icons8.com/color/96/000000/rice-pudding.png">
+                                        <div class="food-img">
+                                            <img src="https://img.icons8.com/color/96/000000/rice-pudding.png" alt="Kheer">
+                                        </div>
+                                        <div class="food-info">
+                                            <h6>Kheer</h6>
+                                            <small class="text-muted">180 kcal</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-items mt-4 p-3 rounded">
+                        <h5><i class="fas fa-list-ul me-2"></i> Your Selection</h5>
+                        <div class="selected-list" id="selected-items-list">
+                            <p class="text-muted empty-message">No items selected yet</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <strong>Total Calories:</strong> <span id="total-calories">0</span> kcal
+                            </div>
+                            {% comment %} <button class="btn btn-primary" id="add-to-plan-btn" disabled>
+                                <i class="fas fa-plus me-1"></i> Add to My Plan
+                            </button> {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Meal Plans Section -->
+<section class="meal-plans" id="meal-plans">
+    <div class="container">
+        <h2 class="section-title">Choose Your Perfect Meal Plan</h2>
+        <p class="section-subtitle">Flexible options to suit your taste and schedule</p>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/free1.jpg' %}" class="card-img-top" alt="Free Trial">
+                            <div class="card-body">
+                                <h5 class="card-title">Free Trial</h5>
+                                <p class="card-text">Experience our service with a 2-day free trial plan.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Paneer Butter Masala</li>
+                                <li>Mixed Vegetable Curry</li>
+                                <li>Dal Makhani</li>
+                                <li>Veg Biryani</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">Free</span>
+                    <a href="{% url 'Free' %}" class="plan-button">Start Trial</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/thali_1.jpg' %}" class="card-img-top" alt="2 Weeks Veg">
+                            <div class="card-body">
+                                <h5 class="card-title">2 Weeks Vegetarian</h5>
+                                <p class="card-text">Perfect for trying out our vegetarian menu.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Shahi Paneer</li>
+                                <li>Veg Kofta</li>
+                                <li>Dal Tadka</li>
+                                <li>Jeera Rice</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">₹499</span>
+                    <a href="{% url 'TwoWeekVeg' %}" class="plan-button">Select Plan</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/th3.jpg' %}" class="card-img-top" alt="1 Month Veg">
+                            <div class="card-body">
+                                <h5 class="card-title">1 Month Vegetarian</h5>
+                                <p class="card-text">A month of delicious vegetarian meals.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Malai Kofta</li>
+                                <li>Palak Paneer</li>
+                                <li>Mix Veg</li>
+                                <li>Veg Pulao</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">₹799</span>
+                    <a href="{% url 'OneMonthVeg' %}" class="plan-button">Select Plan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/th25.jpg' %}" class="card-img-top" alt="1 Month Veg+NonVeg">
+                            <div class="card-body">
+                                <h5 class="card-title">1 Month Veg + Non-Veg</h5>
+                                <p class="card-text">The perfect balance of vegetarian and non-vegetarian meals.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Butter Chicken</li>
+                                <li>Paneer Tikka</li>
+                                <li>Fish Curry</li>
+                                <li>Mixed Rice</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">₹999</span>
+                    <a href="{% url 'OneMonthVegNonVeg' %}" class="plan-button">Select Plan</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/th24.jpg' %}" class="card-img-top" alt="3 Months Veg">
+                            <div class="card-body">
+                                <h5 class="card-title">3 Months Vegetarian</h5>
+                                <p class="card-text">Long-term vegetarian meal plan with great value.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Paneer Masala</li>
+                                <li>Veg Biryani</li>
+                                <li>Dal Fry</li>
+                                <li>Aloo Gobi</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">₹2499</span>
+                    <a href="{% url 'ThreeMonthVeg' %}" class="plan-button">Select Plan</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{% static 'images/th16.jpg' %}" class="card-img-top" alt="3 Months Veg+NonVeg">
+                            <div class="card-body">
+                                <h5 class="card-title">3 Months Veg + Non-Veg</h5>
+                                <p class="card-text">Our most comprehensive long-term meal plan.</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Featured Dishes</h3>
+                            <ul class="dish-list">
+                                <li>Chicken Curry</li>
+                                <li>Mutton Biryani</li>
+                                <li>Fish Fry</li>
+                                <li>Egg Curry</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-info">
+                    <span class="plan-price">₹2699</span>
+                    <a href="{% url 'ThreeMonthVegNonveg' %}" class="plan-button">Select Plan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Delivery Partners Section -->
+<section class="delivery-partners">
+    <div class="container">
+        <h2 class="section-title">Our Trusted Delivery Partners</h2>
+        <p class="section-subtitle">Ensuring your food reaches fresh and on time</p>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="partner-card">
+                    <div class="partner-icon ak-fast-food">
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Circle -->
+                            <circle cx="50" cy="50" r="45" fill="#ff6b6b"/>
+                            <!-- Burger Background -->
+                            <rect x="25" y="40" width="50" height="8" fill="#8B4513"/><!-- Bun Top -->
+                            <rect x="25" y="48" width="50" height="4" fill="#228B22"/><!-- Lettuce -->
+                            <rect x="25" y="52" width="50" height="8" fill="#A52A2A"/><!-- Patty -->
+                            <rect x="25" y="60" width="50" height="8" fill="#8B4513"/><!-- Bun Bottom -->
+                            <!-- AK Text -->
+                            <text x="50" y="40" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">AK</text>
+                        </svg>
+                    </div>
+                    <h4>Ak Fast Food</h4>
+                    <p class="text-muted">Quick and reliable service</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="partner-card">
+                    <div class="partner-icon guru-nanak">
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Circle -->
+                            <circle cx="50" cy="50" r="45" fill="#4ecdc4"/>
+                            <!-- Tiffin Box Background -->
+                            <rect x="30" y="35" width="40" height="40" fill="#ff6b6b"/>
+                            <rect x="25" y="30" width="50" height="8" fill="#333"/><!-- Handle -->
+                            <!-- GN Text -->
+                            <text x="50" y="55" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">GN</text>
+                        </svg>
+                    </div>
+                    <h4>Guru Nanak Tiffin Service</h4>
+                    <p class="text-muted">Homestyle meals delivered</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="partner-card">
+                    <div class="partner-icon kamal-tiffin">
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Circle -->
+                            <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="#ff6b6b" stroke-width="5"/>
+                            <!-- Plate Background -->
+                            <circle cx="50" cy="50" r="30" fill="#4ecdc4"/>
+                            <!-- K Text -->
+                            <text x="50" y="55" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">K</text>
+                        </svg>
+                    </div>
+                    <h4>Kamal Tiffin Service</h4>
+                    <p class="text-muted">Freshness guaranteed</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Hear from people who enjoy our tiffin service daily</p>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <img src="https://img.freepik.com/free-photo/worldface-pakistani-guy-white-background_53876-14466.jpg?t=st=1744637156~exp=1744640756~hmac=7151209858613be7a55c87c905143938446fea9db711081bc6936b064aefdda6&w=826" class="testimonial-img" alt="Customer">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The food tastes just like home! I've been using this service for 6 months and never been disappointed."</p>
+                    <h5 class="testimonial-author">Akarsh Vyas</h5>
+                    <p class="testimonial-role">Student</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <img src="https://randomuser.me/api/portraits/men/22.jpg" class="testimonial-img" alt="Customer">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"As a working professional, this service has been a lifesaver. Fresh, hygienic and delicious food."</p>
+                    <h5 class="testimonial-author">Rohit Malhotra</h5>
+                    <p class="testimonial-role">Bank Manager, Jalandhar</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" class="testimonial-img" alt="Customer">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The variety in the menu keeps me excited. It's like having a different home chef every week!"</p>
+                    <h5 class="testimonial-author">Neha Kapoor</h5>
+                    <p class="testimonial-role">College Student, Delhi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Find answers to common questions about our service</p>
+        
+        <div class="accordion custom-accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <i class="fas fa-truck me-2"></i> How does the delivery work?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                            <div>We deliver freshly cooked meals between 12:30 PM to 2:30 PM for lunch and 7:30 PM to 9:30 PM for dinner. Our delivery partners will bring the food in insulated containers to ensure it stays warm.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <i class="fas fa-utensils me-2"></i> Can I customize my meal plan?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                            <div>Yes! After signing up, you can specify your dietary preferences and allergies. We'll do our best to accommodate your requests while maintaining the quality and variety of your meals.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        <i class="fas fa-calendar-minus me-2"></i> What if I need to skip a day?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                            <div>You can skip up to 2 days per month by informing us before 9 AM for lunch and before 4 PM for dinner. Skipped days will be credited to your account for future use.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        <i class="fas fa-credit-card me-2"></i> What payment methods do you accept?
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                            <div>We accept all major credit/debit cards, UPI payments (Google Pay, PhonePe, etc.), net banking, and cash on delivery. All online payments are secured with SSL encryption.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        <i class="fas fa-exchange-alt me-2"></i> Can I change my plan mid-month?
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                            <div>Yes, you can upgrade your plan at any time. For downgrades, changes will take effect from the next billing cycle. Contact our support team for assistance with plan changes.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scroll to Top Button -->
+<button class="scroll-top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<script>
+    // Initialize carousel
+    document.addEventListener('DOMContentLoaded', function() {
+        const myCarousel = new bootstrap.Carousel(document.getElementById('foodCarousel'), {
+            interval: 4000,
+            wrap: true
+        });
+        
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "grab"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+        
+        // Initialize animations
+        animateOnScroll();
+    });
+
+    // Scroll reveal animation
+    function animateOnScroll() {
+        const elements = document.querySelectorAll('.flip-card, .testimonial-card, .partner-card, .accordion-item');
+        const windowHeight = window.innerHeight;
+        
+        elements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            
+            if (elementPosition < windowHeight - 100) {
+                element.classList.add('visible');
+            }
+        });
+    }
+
+    // Show scroll to top button
+    window.addEventListener('scroll', function() {
+        const scrollTopBtn = document.querySelector('.scroll-top');
+        if (window.pageYOffset > 300) {
+            scrollTopBtn.classList.add('active');
+        } else {
+            scrollTopBtn.classList.remove('active');
+        }
+        
+        // Trigger animations
+        animateOnScroll();
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Scroll to top function
+    document.querySelector('.scroll-top').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Add animation to elements when they come into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.flip-card, .testimonial-card, .partner-card, .accordion-item').forEach(el => {
+        observer.observe(el);
+    });
+
+
+    // Meal Customizer JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize variables
+        let selectedItems = [];
+        let totalCalories = 0;
+        let totalCarbs = 0;
+        let totalProtein = 0;
+        let totalFats = 0;
+        
+        // Category toggle functionality
+        const categoryTitles = document.querySelectorAll('.category-title');
+        categoryTitles.forEach(title => {
+            title.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                const options = document.getElementById(`${category}-options`);
+                const icon = this.querySelector('.fa-chevron-down');
+                
+                // Toggle active class
+                this.classList.toggle('active');
+                
+                // Toggle icon rotation
+                icon.style.transform = this.classList.contains('active') ? 'rotate(180deg)' : '';
+                
+                // Toggle options display
+                if (this.classList.contains('active')) {
+                    options.classList.add('show');
+                    options.style.display = 'block';
+                } else {
+                    options.classList.remove('show');
+                    options.style.display = 'none';
+                }
+            });
+        });
+        
+        // Add item to meal
+        const addButtons = document.querySelectorAll('.add-btn');
+        addButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const foodItem = this.closest('.food-item');
+                const itemName = foodItem.getAttribute('data-name');
+                const itemCalories = parseInt(foodItem.getAttribute('data-calories'));
+                const itemCarbs = parseInt(foodItem.getAttribute('data-carbs'));
+                const itemProtein = parseInt(foodItem.getAttribute('data-protein'));
+                const itemFats = parseInt(foodItem.getAttribute('data-fats'));
+                const itemImg = foodItem.getAttribute('data-img');
+                
+                // Check if item already exists
+                const existingItem = selectedItems.find(item => item.name === itemName);
+                
+                if (existingItem) {
+                    // Increase quantity if item exists
+                    existingItem.quantity++;
+                } else {
+                    // Add new item
+                    selectedItems.push({
+                        name: itemName,
+                        calories: itemCalories,
+                        carbs: itemCarbs,
+                        protein: itemProtein,
+                        fats: itemFats,
+                        img: itemImg,
+                        quantity: 1
+                    });
+                }
+                
+                // Update totals
+                updateTotals(itemCalories, itemCarbs, itemProtein, itemFats, 'add');
+                
+                // Update UI
+                updateSelectedItemsList();
+                updateMealPreview();
+                updateNutritionInfo();
+                
+                // Animate button
+                this.innerHTML = '<i class="fas fa-check"></i> Added';
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    this.innerHTML = 'Add';
+                    this.classList.add('btn-outline-primary');
+                    this.classList.remove('btn-success');
+                }, 1000);
+                
+                // Enable "Add to Plan" button
+                document.getElementById('add-to-plan-btn').disabled = false;
+            });
+        });
+        
+        // Remove item from meal
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-item')) {
+                const itemName = e.target.getAttribute('data-item');
+                const itemIndex = selectedItems.findIndex(item => item.name === itemName);
+                
+                if (itemIndex !== -1) {
+                    const item = selectedItems[itemIndex];
+                    
+                    // Update totals
+                    updateTotals(
+                        item.calories * item.quantity, 
+                        item.carbs * item.quantity, 
+                        item.protein * item.quantity, 
+                        item.fats * item.quantity, 
+                        'remove'
+                    );
+                    
+                    // Remove item
+                    selectedItems.splice(itemIndex, 1);
+                    
+                    // Update UI
+                    updateSelectedItemsList();
+                    updateMealPreview();
+                    updateNutritionInfo();
+                    
+                    // Disable "Add to Plan" button if no items
+                    if (selectedItems.length === 0) {
+                        document.getElementById('add-to-plan-btn').disabled = true;
+                    }
+                }
+            }
+        });
+        
+        // Update totals function
+        function updateTotals(calories, carbs, protein, fats, action) {
+            if (action === 'add') {
+                totalCalories += calories;
+                totalCarbs += carbs;
+                totalProtein += protein;
+                totalFats += fats;
+            } else {
+                totalCalories -= calories;
+                totalCarbs -= carbs;
+                totalProtein -= protein;
+                totalFats -= fats;
+            }
+            
+            // Update display
+            document.getElementById('total-calories').textContent = totalCalories;
+        }
+        
+        // Update selected items list
+        function updateSelectedItemsList() {
+            const selectedList = document.getElementById('selected-items-list');
+            
+            if (selectedItems.length === 0) {
+                selectedList.innerHTML = '<p class="text-muted empty-message">No items selected yet</p>';
+                return;
+            }
+            
+            selectedList.innerHTML = '';
+            
+            selectedItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'selected-item';
+                itemElement.innerHTML = `
+                    <div class="selected-item-name">${item.name}</div>
+                    <div class="selected-item-calories">${item.calories * item.quantity} kcal</div>
+                    <div class="selected-item-quantity">x${item.quantity}</div>
+                    <i class="fas fa-times remove-item" data-item="${item.name}"></i>
+                `;
+                selectedList.appendChild(itemElement);
+            });
+        }
+        
+        // Update meal preview
+        function updateMealPreview() {
+            const mealPreview = document.getElementById('custom-meal-preview');
+            
+            if (selectedItems.length === 0) {
+                mealPreview.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <p>Your customized meal will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            mealPreview.innerHTML = '';
+            
+            // Calculate positions for food items on the plate
+            const centerX = 50;
+            const centerY = 50;
+            const radius = 40;
+            const angleStep = (2 * Math.PI) / selectedItems.length;
+            
+            selectedItems.forEach((item, index) => {
+                const angle = index * angleStep;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                const foodItem = document.createElement('div');
+                foodItem.className = 'food-item-img';
+                foodItem.style.backgroundImage = `url(${item.img})`;
+                foodItem.style.left = `${x}%`;
+                foodItem.style.top = `${y}%`;
+                foodItem.style.animationDelay = `${index * 0.1}s`;
+                foodItem.setAttribute('data-name', item.name);
+                
+                mealPreview.appendChild(foodItem);
+            });
+        }
+        
+        // Update nutrition info
+        function updateNutritionInfo() {
+            // Update calories progress bar
+            const caloriesPercent = Math.min((totalCalories / 800) * 100, 100);
+            document.getElementById('calories-bar').style.width = `${caloriesPercent}%`;
+            document.getElementById('calories-count').textContent = totalCalories;
+            
+            // Update nutrition circles
+            updateNutritionCircle('carbs', totalCarbs, 130);
+            updateNutritionCircle('protein', totalProtein, 60);
+            updateNutritionCircle('fats', totalFats, 50);
+        }
+        
+        function updateNutritionCircle(type, value, max) {
+            const percent = Math.min((value / max) * 100, 100);
+            const circle = document.querySelector(`.nutrition-circle[data-nutri="${type}"] .progress-circle`);
+            const text = document.querySelector(`.nutrition-circle[data-nutri="${type}"] .nutrition-value`);
+            
+            const circumference = 2 * Math.PI * 25;
+            const offset = circumference - (percent / 100) * circumference;
+            
+            circle.style.strokeDasharray = `${circumference - offset} ${offset}`;
+            text.textContent = `${value}g`;
+        }
+        
+        // Add to plan button
+        document.getElementById('add-to-plan-btn').addEventListener('click', function() {
+            // Create a sweet alert with the customized meal
+            Swal.fire({
+                title: 'Add This Custom Meal to Your Plan?',
+                html: `
+                    <div style="text-align: left; margin: 15px 0;">
+                        <p><strong>Selected Items:</strong></p>
+                        <ul style="padding-left: 20px; margin-bottom: 20px;">
+                            ${selectedItems.map(item => `<li>${item.name} x${item.quantity}</li>`).join('')}
+                        </ul>
+                        <p><strong>Total Calories:</strong> ${totalCalories} kcal</p>
+                        <p><strong>Nutrition:</strong> Carbs ${totalCarbs}g | Protein ${totalProtein}g | Fats ${totalFats}g</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Add to My Plan',
+                cancelButtonText: 'Keep Customizing',
+                confirmButtonColor: '#ff6b6b',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Added to Your Plan!',
+                        'Your custom meal has been added to your weekly plan.',
+                        'success'
+                    );
+                    
+                    // Reset customizer
+                    selectedItems = [];
+                    totalCalories = 0;
+                    totalCarbs = 0;
+                    totalProtein = 0;
+                    totalFats = 0;
+                    
+                    updateSelectedItemsList();
+                    updateMealPreview();
+                    updateNutritionInfo();
+                    
+                    document.getElementById('add-to-plan-btn').disabled = true;
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}

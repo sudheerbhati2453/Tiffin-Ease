@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>{{ name }}'s Vendor Dashboard</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #ff6b6b !important;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin: 2rem 0;
+        }
+
+        .welcome-text {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            border-top: none;
+            border-bottom: 2px solid #ff6b6b;
+            color: #555;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            padding: 1rem;
+        }
+
+        .table td {
+            vertical-align: middle;
+            color: #666;
+            padding: 1rem;
+            border-color: #f1f1f1;
+        }
+
+        .delivery-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 2px solid #ff6b6b;
+            transition: all 0.3s ease;
+        }
+
+        .delivery-checkbox:checked {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .status-delivered {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-utensils mr-2"></i>
+            Tiffin Ease
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'loggedin' %}" class="nav-link">
+                        <i class="fas fa-home mr-1"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'vendorLogout' %}" class="nav-link">
+                        <i class="fas fa-sign-out-alt mr-1"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2 class="welcome-text">
+                <i class="fas fa-user-circle mr-2"></i>
+                Welcome, {{ name }}!
+            </h2>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Address Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in customers %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user mr-2 text-muted"></i>
+                                {{obj.Full_Name}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-phone mr-2 text-muted"></i>
+                                {{obj.Phone}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt mr-2 text-muted"></i>
+                                {{obj.Address}}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-light">{{obj.Address_Type}}</span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-pending" id="status-{{forloop.counter}}">Pending</span>
+                        </td>
+                        <td>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" 
+                                       class="delivery-checkbox" 
+                                       id="delivery-{{forloop.counter}}"
+                                       onchange="updateDeliveryStatus(this, '{{forloop.counter}}')">
+                                <label class="custom-control-label" for="delivery-{{forloop.counter}}"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        function updateDeliveryStatus(checkbox, id) {
+            const statusBadge = document.getElementById(`status-${id}`);
+            if (checkbox.checked) {
+                statusBadge.textContent = 'Delivered';
+                statusBadge.classList.remove('status-pending');
+                statusBadge.classList.add('status-delivered');
+            } else {
+                statusBadge.textContent = 'Pending';
+                statusBadge.classList.remove('status-delivered');
+                statusBadge.classList.add('status-pending');
+            }
+        }
+    </script>
+</body>
+</html>

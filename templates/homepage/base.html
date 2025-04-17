@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>TIFFIN EASE</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style type="text/css">
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --dark: #2d3436;
+            --light: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            min-height: 100vh;
+            margin: 0;
+            box-size: border-box;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="%23FFFFFF10" d="M 0,100 C 20,120 50,120 70,100 C 90,80 110,80 130,100 C 150,120 180,120 200,100 L 200,200 L 0,200 Z"/></svg>');
+            background-size: 100% auto;
+            animation: wave 15s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 0; }
+        }
+
+        /* Full width navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .navbar-container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        .navbar:hover {
+            transform: translateY(2px);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+            padding: 0 10px;
+        }
+
+        .brand-text {
+            display: inline-block;
+            transform: translateY(2px);
+        }
+
+        .brand-highlight {
+            font-family: 'Dancing Script', cursive;
+            color: #ff6b6b;
+            font-size: 2.2rem;
+            margin-left: 5px;
+        }
+
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-brand:hover::after {
+            width: 100%;
+        }
+
+        .nav-link {
+            color: var(--dark) !important;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 80%;
+        }
+
+        /* Full width main container */
+        .main-container {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            perspective: 1000px;
+        }
+
+        .content-container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem 0;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        /* Floating elements animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Add some decorative elements */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -150px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -100px;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        /* Full width footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px 0 15px;
+            width: 100%;
+            margin: 0;
+        }
+
+        .footer-container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        .footer h5 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Facebook */
+        .social-link:hover .fa-facebook {
+            color: white;
+        }
+        .social-link:hover:nth-child(1) {
+            background-color: #3b5998;
+        }
+
+        /* X (Twitter) */
+        .social-link:hover .fa-x-twitter {
+            color: white;
+        }
+        .social-link:hover:nth-child(2) {
+            background-color: #000000;
+        }
+
+        /* Instagram */
+        .social-link:hover .fa-instagram {
+            color: white;
+        }
+        .social-link:hover:nth-child(3) {
+            background-color: #e1306c;
+        }
+
+        /* LinkedIn */
+        .social-link:hover .fa-linkedin {
+            color: white;
+        }
+        .social-link:hover:nth-child(4) {
+            background-color: #0077b5;
+        }
+
+        .footer-divider {
+            margin: 30px 0;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Decorative elements -->
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+    
+    <!-- Full width navbar -->
+   <!-- Full width navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">  <!-- Changed to container-fluid for full width -->
+        <a class="navbar-brand" href="#">
+            <span class="brand-text">Tiffin <span class="brand-highlight">Ease</span></span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">  <!-- Changed to ml-auto to push items to right -->
+                {% block navbar %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Vendors</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'admin:index' %}" class="nav-link" target="_blank">Admin</a>
+                </li>
+                {% endblock %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Full width main content -->
+    <div class="main-container">
+        <div class="content-container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Full width footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 style="font-size: 1.1rem;">Tiffin Ease</h5>
+                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Bringing the taste of home to your doorstep.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 style="font-size: 1.1rem;">Quick Links</h5>
+                    <ul class="footer-links" style="font-size: 0.9rem;">
+                        <li><a href="{% url 'login' %}">Home</a></li>
+                        <li><a href="{% url 'loggedin' %}">Dashboard</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="font-size: 1.1rem;">Connect With Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link" style="width: 35px; height: 35px;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link" style="width: 35px; height: 35px;"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" class="social-link" style="width: 35px; height: 35px;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link" style="width: 35px; height: 35px;"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="footer-divider" style="margin: 20px 0;">
+            <div class="footer-bottom" style="font-size: 0.85rem;">
+                <p>&copy; 2025 Tiffin Ease. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+</html>

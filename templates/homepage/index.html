@@ -1,0 +1,453 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+        integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <title>Tiffin Service</title>
+
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+        }
+
+        body {
+            /* Gradient overlay with food background */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.pexels.com/photos/750073/pexels-photo-750073.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .hero-section {
+            
+            background-size: cover;
+            background-position: center;
+            height: 50vh; /* Increased for better visual impact */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-text {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 1.2s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95); /* Semi-transparent for frosted-glass effect */
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            padding: 2.5rem;
+            max-width: 450px;
+            margin: 2rem auto;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .auth-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-control {
+            border-radius: 25px;
+            padding: 0.9rem 1.5rem;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+            outline: none;
+        }
+
+        .input-group-text {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            border-radius: 25px 0 0 25px;
+            padding: 0.9rem 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .input-group-text:hover {
+            background: #ff5252;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 0.9rem 2rem;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Ripple effect on button click */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            pointer-events: none;
+        }
+
+        .btn-primary:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.7s ease-in;
+        }
+
+        .auth-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .auth-links a:hover {
+            color: #ff5252;
+        }
+
+        .auth-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #ff5252;
+            transition: width 0.3s ease;
+        }
+
+        .auth-links a:hover::after {
+            width: 100%;
+        }
+
+        .error-message {
+            color: #ff5252;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: rgba(255, 82, 82, 0.1);
+            animation: slideIn 0.5s ease;
+        }
+
+        .success-message {
+            color: #28a745;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: rgba(40, 167, 69, 0.1);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.8rem;
+            }
+            .hero-section {
+                height: 40vh;
+            }
+            .auth-card {
+                margin: 1rem;
+                padding: 2rem;
+                max-width: 90%;
+            }
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-utensils mr-2"></i>Tiffin Ease
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'vendorLogin' %}" class="nav-link">
+                        <i class="fas fa-store mr-1"></i>Vendors
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'admin:index' %}" class="nav-link">
+                        <i class="fas fa-user-shield mr-1"></i>Admin
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="hero-text">
+            Welcome to Tiffin Ease
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="auth-card">
+            {% if page == 'register' %}
+                <h4 class="text-center mb-4">Create Account</h4>
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        {{form.username}}
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        </div>
+                        {{form.email}}
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                        </div>
+                        {{form.password1}}
+                    </div>
+                    <div class="input-group mb-4">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                        </div>
+                        {{form.password2}}
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block">Register Account</button>
+                    </div>
+                </form>
+                <div class="auth-links">
+                    Already have an account? <a href="{% url 'login' %}">Login here</a>
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <div class="error-message">{{ message }}</div>
+                        {% else %}
+                            <div class="success-message">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+            {% else %}
+                <h4 class="text-center mb-4">Welcome Back</h4>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" name="username" class="form-control" placeholder="Username" required>
+                    </div>
+                    <div class="input-group mb-4">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </div>
+                </form>
+                <div class="auth-links">
+                    Don't have an account? <a href="{% url 'register' %}">Register here</a>
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="error-message">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set placeholders for registration form fields
+            var usernameField = document.querySelector('input[name="username"]');
+            var emailField = document.querySelector('input[name="email"]');
+            var password1Field = document.querySelector('input[name="password1"]');
+            var password2Field = document.querySelector('input[name="password2"]');
+            
+            if (usernameField) usernameField.placeholder = 'Username';
+            if (emailField) emailField.placeholder = 'Email';
+            if (password1Field) password1Field.placeholder = 'Enter password';
+            if (password2Field) password2Field.placeholder = 'Re-enter Password';
+
+            // Set placeholders for login form fields
+            var loginUsername = document.querySelector('input[name="username"][placeholder="Username"]');
+            var loginPassword = document.querySelector('input[name="password"]');
+            
+            if (loginUsername && !loginUsername.placeholder) loginUsername.placeholder = 'Username';
+            if (loginPassword && !loginPassword.placeholder) loginPassword.placeholder = 'Password';
+
+            // Add form-control class to all inputs
+            var inputs = document.getElementsByTagName('input');
+            for (var i = 0; i < inputs.length; i++) {
+                if (!inputs[i].classList.contains('form-control')) {
+                    inputs[i].classList.add('form-control');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
